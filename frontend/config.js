@@ -1,3 +1,2 @@
-// Para apuntar al backend de Railway dev, reemplaza con la URL del servicio:
-// window.API_BASE = 'https://tu-servicio.up.railway.app';
-window.API_BASE = '';
+// Para volver al backend local: window.API_BASE = '';
+window.API_BASE = 'https://saasconsultorio-production.up.railway.app';
