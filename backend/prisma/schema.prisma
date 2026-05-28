@@ -1,0 +1,154 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum AppointmentStatus {
+  booked
+  cancelled
+  completed
+}
+
+enum UserRole {
+  admin
+  secretary
+  doctor
+}
+
+enum PlanType {
+  trial
+  basic
+  pro
+}
+
+model Consultorio {
+  id           Int                 @id @default(autoincrement())
+  name         String
+  slug         String              @unique
+  plan         PlanType            @default(trial)
+  createdAt    DateTime            @default(now())
+  members      ConsultorioMember[]
+  doctorLinks  DoctorConsultorio[]
+  patients     Patient[]
+  appointments Appointment[]
+  availabilities Availability[]
+}
+
+model User {
+  id                  Int                 @id @default(autoincrement())
+  email               String              @unique
+  password            String
+  name                String
+  role                UserRole
+  mustChangePassword  Boolean             @default(false)
+  createdAt           DateTime            @default(now())
+  memberships         ConsultorioMember[]
+  doctor              Doctor?
+}
+
+model ConsultorioMember {
+  id           Int         @id @default(autoincrement())
+  consulorioId Int
+  userId       Int
+  role         UserRole
+  consultorio  Consultorio @relation(fields: [consulorioId], references: [id], onDelete: Cascade)
+  user         User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([consulorioId, userId])
+}
+
+model Doctor {
+  id             Int                 @id @default(autoincrement())
+  userId         Int                 @unique
+  slug           String              @unique
+  specialty      String
+  bio            String
+  createdAt      DateTime            @default(now())
+  user           User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  consultorios   DoctorConsultorio[]
+  services       Service[]
+  availabilities Availability[]
+  appointments   Appointment[]
+  matriculas     DoctorMatricula[]
+}
+
+model DoctorMatricula {
+  id       Int     @id @default(autoincrement())
+  doctorId Int
+  type     String
+  number   String
+  province String?
+  doctor   Doctor  @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+}
+
+model DoctorConsultorio {
+  id           Int         @id @default(autoincrement())
+  doctorId     Int
+  consulorioId Int
+  active       Boolean     @default(true)
+  createdAt    DateTime    @default(now())
+  doctor       Doctor      @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+  consultorio  Consultorio @relation(fields: [consulorioId], references: [id], onDelete: Cascade)
+
+  @@unique([doctorId, consulorioId])
+}
+
+model Service {
+  id           Int           @id @default(autoincrement())
+  doctorId     Int
+  name         String
+  duration     Int
+  price        Decimal?
+  createdAt    DateTime      @default(now())
+  doctor       Doctor        @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+  appointments Appointment[]
+}
+
+model Availability {
+  id           Int         @id @default(autoincrement())
+  doctorId     Int
+  consulorioId Int
+  dayOfWeek    Int
+  startTime    String
+  endTime      String
+  slotDuration Int
+  doctor       Doctor      @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+  consultorio  Consultorio @relation(fields: [consulorioId], references: [id], onDelete: Cascade)
+
+  @@index([doctorId, consulorioId, dayOfWeek])
+}
+
+model Patient {
+  id           Int           @id @default(autoincrement())
+  consulorioId Int
+  name         String
+  email        String
+  phone        String
+  createdAt    DateTime      @default(now())
+  consultorio  Consultorio   @relation(fields: [consulorioId], references: [id], onDelete: Cascade)
+  appointments Appointment[]
+
+  @@unique([consulorioId, email])
+}
+
+model Appointment {
+  id           Int               @id @default(autoincrement())
+  doctorId     Int
+  patientId    Int
+  consulorioId Int
+  serviceId    Int?
+  dateTime     DateTime
+  status       AppointmentStatus @default(booked)
+  createdAt    DateTime          @default(now())
+  doctor       Doctor            @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+  patient      Patient           @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  consultorio  Consultorio       @relation(fields: [consulorioId], references: [id], onDelete: Cascade)
+  service      Service?          @relation(fields: [serviceId], references: [id])
+
+  @@index([doctorId, dateTime])
+  @@unique([doctorId, dateTime])
+}

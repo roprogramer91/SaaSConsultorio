@@ -1,0 +1,488 @@
+:root {
+  --bg: #f6efe5;
+  --bg-accent: #ead9c4;
+  --surface: rgba(255, 252, 247, 0.88);
+  --surface-strong: #fffaf4;
+  --border: rgba(73, 59, 48, 0.14);
+  --text: #2a221d;
+  --muted: #6c5b4f;
+  --primary: #1d6b61;
+  --primary-dark: #134a43;
+  --success: #e4f3ea;
+  --danger: #7e2e2e;
+  --shadow: 0 22px 60px rgba(60, 39, 18, 0.12);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: 'Manrope', sans-serif;
+  color: var(--text);
+  background:
+    radial-gradient(circle at top left, rgba(255, 255, 255, 0.65), transparent 28%),
+    radial-gradient(circle at right, rgba(29, 107, 97, 0.16), transparent 26%),
+    linear-gradient(135deg, var(--bg), var(--bg-accent));
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: linear-gradient(rgba(42, 34, 29, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(42, 34, 29, 0.03) 1px, transparent 1px);
+  background-size: 24px 24px;
+  pointer-events: none;
+}
+
+h1,
+h2,
+h3 {
+  margin: 0;
+  font-family: 'DM Serif Display', serif;
+  font-weight: 400;
+  line-height: 1.05;
+}
+
+p {
+  margin: 0;
+}
+
+.shell {
+  position: relative;
+  z-index: 1;
+  width: min(1120px, calc(100% - 32px));
+  margin: 0 auto;
+  padding: 32px 0 56px;
+}
+
+.hero-shell {
+  display: grid;
+  place-items: center;
+  min-height: 100vh;
+}
+
+.page-shell {
+  display: grid;
+  gap: 20px;
+}
+
+.card,
+.hero-card {
+  background: var(--surface);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  border: 1px solid var(--border);
+  border-radius: 28px;
+  box-shadow: var(--shadow);
+}
+
+.hero-card {
+  max-width: 780px;
+  padding: 48px;
+  animation: rise 0.7s ease;
+}
+
+.auth-card {
+  max-width: 520px;
+}
+
+.card {
+  padding: 28px;
+  animation: rise 0.55s ease;
+}
+
+.eyebrow {
+  margin-bottom: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  font-size: 0.78rem;
+  color: var(--primary-dark);
+}
+
+.lead,
+.helper-text,
+.muted {
+  color: var(--muted);
+}
+
+.lead {
+  font-size: 1.05rem;
+  line-height: 1.65;
+}
+
+.hero-card h1,
+.doctor-summary h1,
+.dashboard-header h1 {
+  font-size: clamp(2.6rem, 6vw, 4.5rem);
+  margin-bottom: 12px;
+}
+
+.doctor-summary p:last-child {
+  max-width: 760px;
+}
+
+.hero-actions,
+.section-head,
+.dashboard-header,
+.inline-form {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.hero-actions {
+  justify-content: flex-start;
+  margin-top: 28px;
+  flex-wrap: wrap;
+}
+
+.booking-layout {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: 20px;
+}
+
+.button {
+  border: none;
+  border-radius: 999px;
+  padding: 14px 20px;
+  font: inherit;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform 0.2s ease, opacity 0.2s ease, background-color 0.2s ease;
+}
+
+.button:hover {
+  transform: translateY(-1px);
+}
+
+.button.primary {
+  background: var(--primary);
+  color: #fff;
+}
+
+.button.secondary,
+.button.ghost {
+  background: rgba(29, 107, 97, 0.08);
+  color: var(--primary-dark);
+}
+
+.slots-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px;
+  margin-top: 22px;
+}
+
+.slot-button {
+  padding: 14px;
+  border-radius: 18px;
+  border: 1px solid var(--border);
+  background: var(--surface-strong);
+  text-align: left;
+}
+
+.slot-button strong,
+.slot-button span {
+  display: block;
+}
+
+.slot-button.active {
+  border-color: var(--primary);
+  background: rgba(29, 107, 97, 0.12);
+}
+
+.booking-form {
+  display: grid;
+  gap: 14px;
+  margin-top: 22px;
+}
+
+.auth-form {
+  margin-top: 28px;
+}
+
+label {
+  display: grid;
+  gap: 8px;
+  font-weight: 600;
+}
+
+input {
+  width: 100%;
+  padding: 14px 16px;
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.88);
+  font: inherit;
+}
+
+select {
+  width: 100%;
+  padding: 14px 16px;
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.88);
+  font: inherit;
+}
+
+.selected-slot,
+.feedback-box,
+.appointment-item,
+.empty-state {
+  border-radius: 18px;
+  padding: 16px;
+}
+
+.selected-slot,
+.empty-state {
+  background: rgba(29, 107, 97, 0.07);
+  color: var(--primary-dark);
+}
+
+.feedback-box {
+  margin-top: 16px;
+  background: var(--success);
+}
+
+.feedback-box.error {
+  background: rgba(126, 46, 46, 0.1);
+  color: var(--danger);
+}
+
+.appointments-list {
+  display: grid;
+  gap: 12px;
+  margin-top: 22px;
+}
+
+.appointments-layout {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 20px;
+  align-items: start;
+}
+
+.filter-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.active-filter {
+  background: var(--primary);
+  color: #fff;
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 1fr 360px;
+  gap: 20px;
+}
+
+.availability-list {
+  display: grid;
+  gap: 12px;
+  margin-top: 22px;
+}
+
+.availability-item {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  border: 1px solid var(--border);
+  background: var(--surface-strong);
+  border-radius: 18px;
+  padding: 16px;
+}
+
+.availability-item p {
+  margin-top: 6px;
+}
+
+.availability-actions {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+.button.small {
+  padding: 10px 14px;
+  font-size: 0.92rem;
+}
+
+.button.danger {
+  background: rgba(126, 46, 46, 0.12);
+  color: var(--danger);
+}
+
+.compact-form {
+  margin-top: 22px;
+}
+
+.card-soft {
+  border: 1px solid var(--border);
+  background: var(--surface-strong);
+  border-radius: 24px;
+  padding: 20px;
+}
+
+.appointment-detail {
+  position: sticky;
+  top: 24px;
+}
+
+.detail-stack {
+  display: grid;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.detail-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.reschedule-panel {
+  display: grid;
+  gap: 12px;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--border);
+}
+
+.reschedule-slots {
+  display: grid;
+  gap: 10px;
+  max-height: 260px;
+  overflow: auto;
+}
+
+.reschedule-option {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 12px 14px;
+  background: rgba(255, 255, 255, 0.72);
+}
+
+.reschedule-option.active {
+  border-color: var(--primary);
+  background: rgba(29, 107, 97, 0.1);
+}
+
+.appointment-item {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  border: 1px solid var(--border);
+  background: var(--surface-strong);
+}
+
+.status-pill {
+  align-self: flex-start;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(29, 107, 97, 0.12);
+  color: var(--primary-dark);
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.hidden {
+  display: none;
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 860px) {
+  .booking-layout,
+  .appointments-layout,
+  .dashboard-grid,
+  .dashboard-header,
+  .section-head,
+  .inline-form,
+  .appointment-item,
+  .availability-item {
+    grid-template-columns: 1fr;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .card,
+  .hero-card {
+    padding: 22px;
+    border-radius: 22px;
+  }
+
+  .shell {
+    width: min(100% - 20px, 1120px);
+    padding: 20px 0 36px;
+  }
+}
+
+.form-section-title {
+  margin-top: 0;
+}
+
+.form-section-gap {
+  margin-top: 1.5rem;
+}
+
+.temp-password-box {
+  margin-top: 1rem;
+}
+
+.doctors-list-gap {
+  margin-top: 1.5rem;
+}
+
+.form-actions-gap {
+  margin-top: 1.5rem;
+}
+
+.temp-password-value {
+  font-weight: 700;
+  letter-spacing: 0.1em;
+}
+
+.temp-password-note {
+  font-size: 0.85rem;
+}
+
+.dynamic-row {
+  display: flex;
+  gap: 0.5rem;
+  align-items: flex-end;
+  margin-bottom: 0.5rem;
+}
+
+.dynamic-row label {
+  flex: 1;
+  margin-bottom: 0;
+}
+
+.dynamic-row input,
+.dynamic-row select {
+  width: 100%;
+}

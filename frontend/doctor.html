@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Reservar turno | MiConsultorio</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Manrope:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body data-page="doctor">
+    <main class="shell page-shell">
+      <section class="doctor-summary card" id="doctorCard">
+        <p class="eyebrow">Landing publica</p>
+        <h1>Cargando doctor...</h1>
+        <p class="lead muted">Estamos preparando la informacion del consultorio.</p>
+      </section>
+
+      <section class="booking-layout">
+        <article class="card">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">Paso 1</p>
+              <h2>Elegi un horario disponible</h2>
+            </div>
+            <button class="button ghost" id="reloadAvailability" type="button">Actualizar</button>
+          </div>
+          <div id="slots" class="slots-grid"></div>
+          <p id="slotFeedback" class="helper-text"></p>
+        </article>
+
+        <article class="card">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">Paso 2</p>
+              <h2>Completa tus datos</h2>
+            </div>
+          </div>
+
+          <form id="bookingForm" class="booking-form">
+            <input id="doctorId" name="doctorId" type="hidden" />
+            <input id="dateTime" name="dateTime" type="hidden" />
+
+            <label>
+              Nombre
+              <input id="name" name="name" type="text" placeholder="Tu nombre completo" required />
+            </label>
+
+            <label>
+              Email
+              <input id="email" name="email" type="email" placeholder="tu@email.com" required />
+            </label>
+
+            <label>
+              Telefono
+              <input id="phone" name="phone" type="tel" placeholder="11 5555 5555" required />
+            </label>
+
+            <div class="selected-slot" id="selectedSlotLabel">Todavia no seleccionaste un horario.</div>
+            <button class="button primary" type="submit">Reservar turno</button>
+          </form>
+
+          <div id="bookingMessage" class="feedback-box hidden"></div>
+        </article>
+      </section>
+    </main>
+
+    <script src="/app.js"></script>
+  </body>
+</html>

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login | MiConsultorio</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Manrope:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body data-page="login">
+    <main class="shell hero-shell">
+      <section class="hero-card auth-card">
+        <p class="eyebrow">Acceso profesional</p>
+        <h1>Inicia sesion para ver tu agenda.</h1>
+        <p class="lead">Usa el email y password del doctor cargado en la base para entrar al dashboard.</p>
+
+        <form id="loginForm" class="booking-form auth-form">
+          <label>
+            Email
+            <input id="loginEmail" type="email" placeholder="maria.perez@miconsultorio.com" required />
+          </label>
+
+          <label>
+            Password
+            <input id="loginPassword" type="password" placeholder="demo1234" required />
+          </label>
+
+          <button class="button primary" type="submit">Ingresar</button>
+        </form>
+
+        <div id="loginMessage" class="feedback-box hidden"></div>
+      </section>
+    </main>
+
+    <script src="/app.js"></script>
+  </body>
+</html>

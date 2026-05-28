@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard | MiConsultorio</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Manrope:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body data-page="dashboard">
+    <main class="shell page-shell">
+      <section class="card dashboard-header">
+        <div>
+          <p class="eyebrow">Agenda del doctor</p>
+          <h1 id="dashboardTitle">Turnos confirmados</h1>
+          <p class="lead muted" id="dashboardSubtitle">Estamos cargando la agenda del doctor autenticado.</p>
+        </div>
+
+        <button class="button ghost" id="logoutButton" type="button">Cerrar sesion</button>
+      </section>
+
+      <section class="card">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Proximos turnos</p>
+            <h2>Lista de reservas</h2>
+          </div>
+          <div class="filter-row" id="appointmentFilters">
+            <button class="button ghost small active-filter" type="button" data-filter="all">Todos</button>
+            <button class="button ghost small" type="button" data-filter="booked">Booked</button>
+            <button class="button ghost small" type="button" data-filter="cancelled">Cancelled</button>
+            <button class="button ghost small" type="button" data-filter="completed">Completed</button>
+          </div>
+        </div>
+
+        <div class="appointments-layout">
+          <div id="appointments" class="appointments-list"></div>
+          <aside class="appointment-detail card-soft" id="appointmentDetail">
+            <p class="eyebrow">Detalle del turno</p>
+            <h3 id="appointmentDetailTitle">Selecciona un turno</h3>
+            <p class="muted" id="appointmentDetailMeta">Aqui vas a ver la informacion completa del paciente y el estado.</p>
+
+            <div class="detail-stack hidden" id="appointmentDetailContent">
+              <p><strong>Paciente:</strong> <span id="detailPatientName"></span></p>
+              <p><strong>Email:</strong> <span id="detailPatientEmail"></span></p>
+              <p><strong>Telefono:</strong> <span id="detailPatientPhone"></span></p>
+              <p><strong>Fecha:</strong> <span id="detailDateTime"></span></p>
+              <p><strong>Estado:</strong> <span id="detailStatus"></span></p>
+
+              <label>
+                Cambiar estado
+                <select id="appointmentStatusSelect">
+                  <option value="booked">booked</option>
+                  <option value="cancelled">cancelled</option>
+                  <option value="completed">completed</option>
+                </select>
+              </label>
+
+              <div class="detail-actions">
+                <button class="button primary small" id="saveAppointmentStatus" type="button">Guardar estado</button>
+                <button class="button danger small" id="cancelAppointmentButton" type="button">Cancelar turno</button>
+                <button class="button ghost small" id="toggleRescheduleButton" type="button">Reprogramar</button>
+              </div>
+
+              <div class="reschedule-panel hidden" id="reschedulePanel">
+                <p><strong>Horarios alternativos</strong></p>
+                <div class="reschedule-slots" id="rescheduleOptions"></div>
+                <div class="detail-actions">
+                  <button class="button primary small" id="confirmRescheduleButton" type="button">Confirmar reprogramacion</button>
+                  <button class="button ghost small" id="cancelRescheduleButton" type="button">Cerrar</button>
+                </div>
+              </div>
+            </div>
+
+            <div id="appointmentDetailMessage" class="feedback-box hidden"></div>
+          </aside>
+        </div>
+      </section>
+
+      <section class="card dashboard-grid">
+        <article>
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">Disponibilidad semanal</p>
+              <h2>Bloques actuales</h2>
+            </div>
+          </div>
+
+          <div id="availabilityList" class="availability-list"></div>
+        </article>
+
+        <article>
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">Gestion</p>
+              <h2 id="availabilityFormTitle">Agregar bloque</h2>
+            </div>
+            <button class="button ghost hidden" id="cancelAvailabilityEdit" type="button">Cancelar edicion</button>
+          </div>
+
+          <form id="availabilityForm" class="booking-form compact-form">
+            <input id="availabilityId" type="hidden" />
+
+            <label>
+              Dia de la semana
+              <select id="dayOfWeek" required>
+                <option value="0">Domingo</option>
+                <option value="1">Lunes</option>
+                <option value="2">Martes</option>
+                <option value="3">Miercoles</option>
+                <option value="4">Jueves</option>
+                <option value="5">Viernes</option>
+                <option value="6">Sabado</option>
+              </select>
+            </label>
+
+            <label>
+              Hora de inicio
+              <input id="startTime" type="time" required />
+            </label>
+
+            <label>
+              Hora de fin
+              <input id="endTime" type="time" required />
+            </label>
+
+            <label>
+              Duracion del turno (minutos)
+              <input id="slotDuration" type="number" min="1" step="1" value="30" required />
+            </label>
+
+            <button class="button primary" id="availabilitySubmit" type="submit">Guardar bloque</button>
+          </form>
+
+          <div id="availabilityMessage" class="feedback-box hidden"></div>
+        </article>
+      </section>
+    </main>
+
+    <script src="/app.js"></script>
+  </body>
+</html>

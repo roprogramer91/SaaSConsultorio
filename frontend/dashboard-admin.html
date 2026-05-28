@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Panel Admin | MiConsultorio</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body data-page="dashboard-admin">
+    <main class="shell page-shell">
+
+      <section class="card dashboard-header">
+        <div>
+          <p class="eyebrow">Panel de administracion</p>
+          <h1 id="adminTitle">Cargando...</h1>
+          <p class="lead muted" id="adminSubtitle"></p>
+        </div>
+        <button class="button ghost" id="logoutButton" type="button">Cerrar sesion</button>
+      </section>
+
+      <section class="card">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Equipo medico</p>
+            <h2>Doctores del consultorio</h2>
+          </div>
+          <button class="button primary small" id="toggleDoctorForm" type="button">+ Agregar doctor</button>
+        </div>
+
+        <div class="card-soft hidden" id="doctorFormPanel">
+          <p class="eyebrow" id="doctorFormEyebrow">Nuevo doctor</p>
+          <h3 id="doctorFormTitle">Alta de profesional</h3>
+
+          <form id="doctorForm" class="booking-form compact-form">
+            <input type="hidden" id="editingDoctorId" />
+
+            <p class="eyebrow form-section-title">Datos del profesional</p>
+            <label>
+              Email
+              <input id="doctorEmail" type="email" required placeholder="doctor@mail.com" />
+            </label>
+            <label>
+              Nombre completo
+              <input id="doctorName" type="text" required placeholder="Dr. Juan Lopez" />
+            </label>
+            <label>
+              Slug (URL publica)
+              <input id="doctorSlug" type="text" required placeholder="dr-juan-lopez" />
+            </label>
+            <label>
+              Especialidad
+              <select id="doctorSpecialty" required>
+                <option value="">Seleccionar especialidad...</option>
+              </select>
+            </label>
+            <label>
+              Bio
+              <textarea id="doctorBio" rows="3" placeholder="Descripcion profesional..."></textarea>
+            </label>
+
+            <div id="newDoctorExtras">
+              <p class="eyebrow">Matriculas</p>
+              <div id="matriculasContainer"></div>
+              <button class="button ghost small" type="button" id="addMatriculaRow">+ Agregar matricula</button>
+
+              <p class="eyebrow form-section-gap">Servicios</p>
+              <div id="servicesContainer"></div>
+              <button class="button ghost small" type="button" id="addServiceRow">+ Agregar servicio</button>
+            </div>
+
+            <div class="detail-actions form-actions-gap">
+              <button class="button primary small" type="submit" id="doctorFormSubmit">Guardar</button>
+              <button class="button ghost small" type="button" id="cancelDoctorForm">Cancelar</button>
+            </div>
+          </form>
+
+          <div id="doctorFormMessage" class="feedback-box hidden"></div>
+
+          <div id="tempPasswordBox" class="hidden temp-password-box">
+            <p class="eyebrow">Contrasena temporal generada</p>
+            <p>Pasale esta contrasena al doctor por fuera del sistema:</p>
+            <p class="lead temp-password-value" id="tempPasswordValue"></p>
+            <p class="muted temp-password-note">El doctor debera cambiarla en su primer ingreso.</p>
+          </div>
+        </div>
+
+        <div id="doctorsList" class="doctors-list doctors-list-gap"></div>
+      </section>
+
+      <div id="serviceMatriculaPanel" class="card hidden">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Gestion del doctor</p>
+            <h2 id="panelDoctorName">—</h2>
+          </div>
+          <button class="button ghost small" id="closePanelButton" type="button">Cerrar</button>
+        </div>
+
+        <div class="dashboard-grid">
+          <article>
+            <div class="section-head">
+              <div>
+                <p class="eyebrow">Servicios</p>
+                <h3>Servicios que ofrece</h3>
+              </div>
+            </div>
+            <div id="servicesList" class="availability-list"></div>
+
+            <form id="serviceForm" class="booking-form compact-form form-section-gap">
+              <input type="hidden" id="editingServiceId" />
+              <label>Nombre del servicio<input id="serviceName" type="text" required placeholder="Consulta general" /></label>
+              <label>Duracion (minutos)<input id="serviceDuration" type="number" min="1" required placeholder="30" /></label>
+              <label>Precio (opcional)<input id="servicePrice" type="number" min="0" step="0.01" placeholder="5000" /></label>
+              <div class="detail-actions">
+                <button class="button primary small" type="submit" id="serviceFormSubmit">Guardar servicio</button>
+                <button class="button ghost small hidden" type="button" id="cancelServiceEdit">Cancelar</button>
+              </div>
+            </form>
+            <div id="serviceMessage" class="feedback-box hidden"></div>
+          </article>
+
+          <article>
+            <div class="section-head">
+              <div>
+                <p class="eyebrow">Matriculas</p>
+                <h3>Habilitaciones profesionales</h3>
+              </div>
+            </div>
+            <div id="matriculasList" class="availability-list"></div>
+
+            <form id="matriculaForm" class="booking-form compact-form form-section-gap">
+              <label>
+                Tipo
+                <select id="matriculaType" required>
+                  <option value="nacional">Nacional</option>
+                  <option value="provincial">Provincial</option>
+                </select>
+              </label>
+              <label>Numero<input id="matriculaNumber" type="text" required placeholder="MN 12345" /></label>
+              <label>Provincia (si es provincial)<input id="matriculaProvince" type="text" placeholder="Buenos Aires" /></label>
+              <button class="button primary small" type="submit">Agregar matricula</button>
+            </form>
+            <div id="matriculaMessage" class="feedback-box hidden"></div>
+          </article>
+        </div>
+      </div>
+
+    </main>
+    <script src="/app.js"></script>
+  </body>
+</html>
