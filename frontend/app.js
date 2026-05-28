@@ -60,6 +60,8 @@ async function initLoginPage() {
 
       if (session.user.mustChangePassword) {
         window.location.href = '/change-password';
+      } else if (session.user.role === 'superadmin') {
+        window.location.href = '/dashboard-superadmin';
       } else if (session.user.role === 'admin' || session.user.role === 'secretary') {
         window.location.href = '/dashboard-admin';
       } else {
@@ -539,8 +541,12 @@ async function initDashboardPage() {
 
   try {
     dashboardSession = await fetchWithAuth('/auth/me');
+    if (dashboardSession.user.role !== 'doctor') {
+      window.location.href = '/dashboard-admin';
+      return;
+    }
     title.textContent = `Turnos confirmados de ${dashboardSession.user.name}`;
-    subtitle.textContent = `${dashboardSession.doctor?.specialty} - ${dashboardSession.user.email}`;
+    subtitle.textContent = `${dashboardSession.doctor?.specialty ?? ''} - ${dashboardSession.user.email}`;
     renderAppointmentFilters();
     resetAppointmentDetail();
     await Promise.all([loadAppointments(), loadAvailability()]);
@@ -580,7 +586,14 @@ async function initChangePasswordPage() {
         })
       });
 
-      window.location.href = '/dashboard';
+      const session = await fetchWithAuth('/auth/me');
+      if (session.user.role === 'superadmin') {
+        window.location.href = '/dashboard-superadmin';
+      } else if (session.user.role === 'admin' || session.user.role === 'secretary') {
+        window.location.href = '/dashboard-admin';
+      } else {
+        window.location.href = '/dashboard';
+      }
     } catch (error) {
       showMessage(message, error.message, true);
     }
@@ -1039,6 +1052,132 @@ async function initAdminDashboardPage() {
   }
 }
 
+async function initSuperadminDashboardPage() {
+  const superadminTitle = document.getElementById('superadminTitle');
+  const logoutButton = document.getElementById('logoutButton');
+  const toggleForm = document.getElementById('toggleForm');
+  const formPanel = document.getElementById('formPanel');
+  const cancelForm = document.getElementById('cancelForm');
+  const consulorioForm = document.getElementById('consulorioForm');
+  const formMessage = document.getElementById('formMessage');
+  const tempPasswordBox = document.getElementById('tempPasswordBox');
+  const tempPasswordValue = document.getElementById('tempPasswordValue');
+  const tempAdminEmail = document.getElementById('tempAdminEmail');
+  const consuloriosList = document.getElementById('consuloriosList');
+
+  const planLabels = { trial: 'Trial', basic: 'Basic', pro: 'Pro' };
+
+  function openForm() {
+    formPanel.classList.remove('hidden');
+    toggleForm.textContent = '— Cerrar formulario';
+    tempPasswordBox.classList.add('hidden');
+    formMessage.classList.add('hidden');
+  }
+
+  function closeForm() {
+    formPanel.classList.add('hidden');
+    toggleForm.textContent = '+ Nuevo consultorio';
+    consulorioForm.reset();
+    tempPasswordBox.classList.add('hidden');
+    formMessage.classList.add('hidden');
+  }
+
+  toggleForm.addEventListener('click', () => {
+    formPanel.classList.contains('hidden') ? openForm() : closeForm();
+  });
+  cancelForm.addEventListener('click', closeForm);
+
+  async function loadConsultorios() {
+    const data = await fetchWithAuth('/superadmin/consultorios');
+    consuloriosList.innerHTML = '';
+
+    if (!data.consultorios.length) {
+      consuloriosList.innerHTML = '<div class="empty-state">No hay consultorios registrados todavia.</div>';
+      return;
+    }
+
+    data.consultorios.forEach((c) => {
+      const admin = c.members[0]?.user;
+      const item = document.createElement('article');
+      item.className = 'availability-item';
+      item.innerHTML = `
+        <div>
+          <strong>${c.name}</strong>
+          <p class="muted">/${c.slug} · ${admin ? admin.email : 'sin admin'}</p>
+          <p class="muted">${c.doctorLinks.length} doctor(es) · ${c._count.patients} paciente(s) · ${c._count.appointments} turno(s)</p>
+          <span class="status-pill">${planLabels[c.plan] || c.plan}</span>
+        </div>
+        <div class="availability-actions">
+          <select class="plan-select" data-consultorio-id="${c.id}">
+            <option value="trial" ${c.plan === 'trial' ? 'selected' : ''}>Trial</option>
+            <option value="basic" ${c.plan === 'basic' ? 'selected' : ''}>Basic</option>
+            <option value="pro" ${c.plan === 'pro' ? 'selected' : ''}>Pro</option>
+          </select>
+        </div>
+      `;
+      consuloriosList.appendChild(item);
+    });
+
+    consuloriosList.querySelectorAll('.plan-select').forEach((select) => {
+      select.addEventListener('change', async () => {
+        try {
+          await fetchWithAuth(`/superadmin/consultorios/${select.dataset.consultorioId}/plan`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ plan: select.value })
+          });
+          await loadConsultorios();
+        } catch (error) {
+          alert(error.message);
+        }
+      });
+    });
+  }
+
+  consulorioForm.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    try {
+      const result = await fetchWithAuth('/superadmin/consultorios', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: document.getElementById('consulorioName').value.trim(),
+          slug: document.getElementById('consulorioSlug').value.trim(),
+          adminName: document.getElementById('adminName').value.trim(),
+          adminEmail: document.getElementById('adminEmail').value.trim(),
+          plan: document.getElementById('consulorioPlan').value
+        })
+      });
+
+      showMessage(formMessage, result.message);
+      tempAdminEmail.textContent = result.consultorio.members[0].user.email;
+      tempPasswordValue.textContent = result.tempPassword;
+      tempPasswordBox.classList.remove('hidden');
+      consulorioForm.reset();
+      await loadConsultorios();
+    } catch (error) {
+      showMessage(formMessage, error.message, true);
+    }
+  });
+
+  logoutButton.addEventListener('click', async () => {
+    try {
+      await fetchWithAuth('/auth/logout', { method: 'POST' });
+      window.location.href = '/login';
+    } catch (error) {
+      console.error(error);
+    }
+  });
+
+  try {
+    const session = await fetchWithAuth('/auth/me');
+    superadminTitle.textContent = session.user.name;
+    await loadConsultorios();
+  } catch (error) {
+    window.location.href = '/login';
+  }
+}
+
 if (document.body.dataset.page === 'login') {
   initLoginPage();
 }
@@ -1057,4 +1196,8 @@ if (document.body.dataset.page === 'dashboard-admin') {
 
 if (document.body.dataset.page === 'change-password') {
   initChangePasswordPage();
+}
+
+if (document.body.dataset.page === 'dashboard-superadmin') {
+  initSuperadminDashboardPage();
 }

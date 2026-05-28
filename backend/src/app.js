@@ -9,6 +9,7 @@ import meAppointmentRoutes from './routes/meAppointmentRoutes.js';
 import appointmentRoutes from './routes/appointmentRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
 import specialtyRoutes from './routes/specialtyRoutes.js';
+import superadminRoutes from './routes/superadminRoutes.js';
 import { requireDashboardPageAuth } from './middleware/authMiddleware.js';
 
 const app = express();
@@ -22,6 +23,7 @@ app.use(express.static(frontendPath));
 
 app.use(authRoutes);
 app.use(specialtyRoutes);
+app.use(superadminRoutes);
 app.use(adminRoutes);
 app.use(availabilityRoutes);
 app.use(meAppointmentRoutes);
@@ -46,6 +48,10 @@ app.get('/dashboard-admin', requireDashboardPageAuth, (req, res) => {
 
 app.get('/change-password', requireDashboardPageAuth, (req, res) => {
   res.sendFile(path.join(frontendPath, 'change-password.html'));
+});
+
+app.get('/dashboard-superadmin', requireDashboardPageAuth, (req, res) => {
+  res.sendFile(path.join(frontendPath, 'dashboard-superadmin.html'));
 });
 
 app.get('/:slug', (req, res) => {

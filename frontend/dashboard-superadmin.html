@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Superadmin | MiConsultorio</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body data-page="dashboard-superadmin">
+    <main class="shell page-shell">
+
+      <section class="card dashboard-header">
+        <div>
+          <p class="eyebrow">Panel de control</p>
+          <h1 id="superadminTitle">Cargando...</h1>
+          <p class="lead muted">Gestion global de consultorios</p>
+        </div>
+        <button class="button ghost" id="logoutButton" type="button">Cerrar sesion</button>
+      </section>
+
+      <section class="card">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Clientes</p>
+            <h2>Consultorios activos</h2>
+          </div>
+          <button class="button primary small" id="toggleForm" type="button">+ Nuevo consultorio</button>
+        </div>
+
+        <div class="card-soft hidden" id="formPanel">
+          <p class="eyebrow form-section-title">Nuevo cliente</p>
+          <h3>Alta de consultorio</h3>
+
+          <form id="consulorioForm" class="booking-form compact-form">
+            <label>
+              Nombre del consultorio
+              <input id="consulorioName" type="text" required placeholder="Policonsultorio San Martin" />
+            </label>
+            <label>
+              Slug (URL publica)
+              <input id="consulorioSlug" type="text" required placeholder="policonsultorio-san-martin" />
+            </label>
+
+            <p class="eyebrow form-section-gap">Administrador</p>
+            <label>
+              Nombre del admin
+              <input id="adminName" type="text" required placeholder="Dr. Juan Lopez" />
+            </label>
+            <label>
+              Email del admin
+              <input id="adminEmail" type="email" required placeholder="admin@consultorio.com" />
+            </label>
+            <label>
+              Plan
+              <select id="consulorioPlan">
+                <option value="trial">Trial</option>
+                <option value="basic">Basic</option>
+                <option value="pro">Pro</option>
+              </select>
+            </label>
+
+            <div class="detail-actions form-actions-gap">
+              <button class="button primary small" type="submit">Crear consultorio</button>
+              <button class="button ghost small" type="button" id="cancelForm">Cancelar</button>
+            </div>
+          </form>
+
+          <div id="formMessage" class="feedback-box hidden"></div>
+
+          <div id="tempPasswordBox" class="hidden temp-password-box">
+            <p class="eyebrow">Credenciales del admin</p>
+            <p>Pasale estos datos al cliente:</p>
+            <p><strong>Email:</strong> <span id="tempAdminEmail"></span></p>
+            <p><strong>Contrasena temporal:</strong> <span class="temp-password-value" id="tempPasswordValue"></span></p>
+            <p class="muted temp-password-note">El admin debera cambiarla en su primer ingreso.</p>
+          </div>
+        </div>
+
+        <div id="consuloriosList" class="doctors-list doctors-list-gap"></div>
+      </section>
+
+    </main>
+    <script src="/app.js"></script>
+  </body>
+</html>

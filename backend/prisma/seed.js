@@ -7,6 +7,18 @@ const prisma = new PrismaClient();
 async function main() {
   const hashedPassword = await bcrypt.hash('demo1234', 10);
 
+  // Superadmin
+  await prisma.user.upsert({
+    where: { email: 'roger@miconsultorio.com' },
+    update: { name: 'Roger Ramirez', password: hashedPassword },
+    create: {
+      email: 'roger@miconsultorio.com',
+      password: hashedPassword,
+      name: 'Roger Ramirez',
+      role: 'superadmin'
+    }
+  });
+
   // Consultorio demo
   const consultorio = await prisma.consultorio.upsert({
     where: { slug: 'policonsultorio-san-martin' },
