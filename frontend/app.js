@@ -1,5 +1,19 @@
-async function getJson(url, options) {
-  const response = await fetch(url, options);
+const API_BASE = window.API_BASE || '';
+
+function getToken() {
+  return localStorage.getItem('authToken');
+}
+
+function saveToken(token) {
+  localStorage.setItem('authToken', token);
+}
+
+function clearToken() {
+  localStorage.removeItem('authToken');
+}
+
+async function getJson(url, options = {}) {
+  const response = await fetch(API_BASE + url, options);
   const data = await response.json();
 
   if (!response.ok) {
@@ -29,11 +43,12 @@ function showMessage(element, message, isError = false) {
 }
 
 async function fetchWithAuth(url, options = {}) {
+  const token = getToken();
   return getJson(url, {
     ...options,
-    credentials: 'include',
     headers: {
-      ...(options.headers || {})
+      ...(options.headers || {}),
+      ...(token ? { Authorization: `Bearer ${token}` } : {})
     }
   });
 }
@@ -53,10 +68,10 @@ async function initLoginPage() {
     try {
       const session = await getJson('/auth/login', {
         method: 'POST',
-        credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
       });
+      saveToken(session.token);
 
       if (session.user.mustChangePassword) {
         window.location.href = '/change-password';
@@ -531,12 +546,9 @@ async function initDashboardPage() {
   });
 
   logoutButton.addEventListener('click', async () => {
-    try {
-      await fetchWithAuth('/auth/logout', { method: 'POST' });
-      window.location.href = '/login';
-    } catch (error) {
-      list.innerHTML = `<div class="empty-state">${error.message}</div>`;
-    }
+    try { await fetchWithAuth('/auth/logout', { method: 'POST' }); } catch (_) {}
+    clearToken();
+    window.location.href = '/login';
   });
 
   try {
@@ -1023,12 +1035,9 @@ async function initAdminDashboardPage() {
   });
 
   logoutButton.addEventListener('click', async () => {
-    try {
-      await fetchWithAuth('/auth/logout', { method: 'POST' });
-      window.location.href = '/login';
-    } catch (error) {
-      console.error(error);
-    }
+    try { await fetchWithAuth('/auth/logout', { method: 'POST' }); } catch (_) {}
+    clearToken();
+    window.location.href = '/login';
   });
 
   const specialtySelect = document.getElementById('doctorSpecialty');
@@ -1183,12 +1192,9 @@ async function initSuperadminDashboardPage() {
   });
 
   logoutButton.addEventListener('click', async () => {
-    try {
-      await fetchWithAuth('/auth/logout', { method: 'POST' });
-      window.location.href = '/login';
-    } catch (error) {
-      console.error(error);
-    }
+    try { await fetchWithAuth('/auth/logout', { method: 'POST' }); } catch (_) {}
+    clearToken();
+    window.location.href = '/login';
   });
 
   try {
