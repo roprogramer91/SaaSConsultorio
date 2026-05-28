@@ -27,11 +27,12 @@ enum PlanType {
 }
 
 model Consultorio {
-  id           Int                 @id @default(autoincrement())
-  name         String
-  slug         String              @unique
-  plan         PlanType            @default(trial)
-  createdAt    DateTime            @default(now())
+  id             Int                 @id @default(autoincrement())
+  name           String
+  slug           String              @unique
+  plan           PlanType            @default(trial)
+  planExpiresAt  DateTime?
+  createdAt      DateTime            @default(now())
   members      ConsultorioMember[]
   doctorLinks  DoctorConsultorio[]
   patients     Patient[]

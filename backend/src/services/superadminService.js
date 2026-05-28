@@ -68,9 +68,12 @@ export async function createConsultorio({ name, slug, adminName, adminEmail, pla
   return { consultorio, tempPassword };
 }
 
-export async function updateConsultorioPlan({ consulorioId, plan }) {
+export async function updateConsultorioPlan({ consulorioId, plan, months }) {
+  const expiresAt = new Date();
+  expiresAt.setMonth(expiresAt.getMonth() + (Number(months) || 1));
+
   return prisma.consultorio.update({
     where: { id: consulorioId },
-    data: { plan }
+    data: { plan, planExpiresAt: expiresAt }
   });
 }

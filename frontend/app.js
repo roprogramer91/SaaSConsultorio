@@ -1067,6 +1067,14 @@ async function initSuperadminDashboardPage() {
 
   const planLabels = { trial: 'Trial', basic: 'Basic', pro: 'Pro' };
 
+  function planStatus(c) {
+    if (!c.planExpiresAt) return { label: 'Sin vencimiento', css: '' };
+    const diff = Math.ceil((new Date(c.planExpiresAt) - new Date()) / (1000 * 60 * 60 * 24));
+    if (diff < 0) return { label: `Vencido hace ${Math.abs(diff)} dias`, css: 'status-expired' };
+    if (diff <= 7) return { label: `Vence en ${diff} dias`, css: 'status-warning' };
+    return { label: `Vence ${new Date(c.planExpiresAt).toLocaleDateString('es-AR')}`, css: 'status-ok' };
+  }
+
   function openForm() {
     formPanel.classList.remove('hidden');
     toggleForm.textContent = '— Cerrar formulario';
@@ -1098,6 +1106,7 @@ async function initSuperadminDashboardPage() {
 
     data.consultorios.forEach((c) => {
       const admin = c.members[0]?.user;
+      const status = planStatus(c);
       const item = document.createElement('article');
       item.className = 'availability-item';
       item.innerHTML = `
@@ -1105,7 +1114,10 @@ async function initSuperadminDashboardPage() {
           <strong>${c.name}</strong>
           <p class="muted">/${c.slug} · ${admin ? admin.email : 'sin admin'}</p>
           <p class="muted">${c.doctorLinks.length} doctor(es) · ${c._count.patients} paciente(s) · ${c._count.appointments} turno(s)</p>
-          <span class="status-pill">${planLabels[c.plan] || c.plan}</span>
+          <div style="display:flex;gap:0.5rem;align-items:center;flex-wrap:wrap;margin-top:0.25rem;">
+            <span class="status-pill">${planLabels[c.plan] || c.plan}</span>
+            <span class="status-pill ${status.css}">${status.label}</span>
+          </div>
         </div>
         <div class="availability-actions">
           <select class="plan-select" data-consultorio-id="${c.id}">
@@ -1113,18 +1125,28 @@ async function initSuperadminDashboardPage() {
             <option value="basic" ${c.plan === 'basic' ? 'selected' : ''}>Basic</option>
             <option value="pro" ${c.plan === 'pro' ? 'selected' : ''}>Pro</option>
           </select>
+          <select class="months-select">
+            <option value="1">1 mes</option>
+            <option value="3">3 meses</option>
+            <option value="6">6 meses</option>
+            <option value="12">12 meses</option>
+          </select>
+          <button class="button primary small" type="button" data-renew="${c.id}">Renovar</button>
         </div>
       `;
       consuloriosList.appendChild(item);
     });
 
-    consuloriosList.querySelectorAll('.plan-select').forEach((select) => {
-      select.addEventListener('change', async () => {
+    consuloriosList.querySelectorAll('[data-renew]').forEach((btn) => {
+      btn.addEventListener('click', async () => {
+        const card = btn.closest('article');
+        const plan = card.querySelector('.plan-select').value;
+        const months = card.querySelector('.months-select').value;
         try {
-          await fetchWithAuth(`/superadmin/consultorios/${select.dataset.consultorioId}/plan`, {
+          await fetchWithAuth(`/superadmin/consultorios/${btn.dataset.renew}/plan`, {
             method: 'PATCH',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ plan: select.value })
+            body: JSON.stringify({ plan, months })
           });
           await loadConsultorios();
         } catch (error) {
