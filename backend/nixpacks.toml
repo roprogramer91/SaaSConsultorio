@@ -1,5 +1,0 @@
-[phases.build]
-cmds = ["npm ci", "npx prisma generate"]
-
-[start]
-cmd = "node src/app.js"
